@@ -38,6 +38,8 @@ export class CreateCustomerDto {
   @IsNotEmpty()
   preferred_style: string;
 
+  profile: boolean = true;
+
   //   chat_sessions_available: number;
 
   //   video_sessions_available: number;

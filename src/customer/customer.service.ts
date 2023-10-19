@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCustomerDto, SubscriptionDto } from 'src/customer/dto/customer.dto';
+import {
+  CreateCustomerDto,
+  SubscriptionDto,
+} from 'src/customer/dto/customer.dto';
 import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
 import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
 import { CustomerRepository } from 'src/customer/customer.repository';
@@ -9,6 +12,7 @@ export class CustomerService {
   constructor(private readonly customerRepo: CustomerRepository) {}
 
   async create(createCustomerDto: CreateCustomerDto) {
+    createCustomerDto.profile = true;
     const customer = await this.customerRepo.get_customer(createCustomerDto.id);
 
     if (customer) return customer;
@@ -26,11 +30,21 @@ export class CustomerService {
     return { message: 'This customer is not exist in DB' };
   }
 
-  async subscription(customer_id, subscription_id: string) {
+  async subscription(customer_id: string, subscription_id: string) {
     const getSub = await this.customerRepo.get_subscription_packages_byId(
       subscription_id,
     );
-    const customer = await this.customerRepo.get_customer(customer_id);
+
+    if (!getSub) {
+      return { message: 'Invalid subscription id' };
+    }
+    let customer = await this.customerRepo.get_customer(customer_id);
+    if (!customer) {
+      customer = await this.customerRepo.create_customer({
+        id: customer_id,
+      });
+    }
+
     const updateSub = {
       total_chat_sessions: customer.total_chat_sessions + getSub.chat_sessions,
       total_video_sessions:

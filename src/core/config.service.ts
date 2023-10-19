@@ -10,6 +10,7 @@ export class ConfigService {
     try {
       this.envConfig = dotenv.parse(fs.readFileSync('.env'));
       process.env = Object.assign(process.env, this.envConfig);
+      console.log(this.envConfig);
     } catch (e) {
       this.envConfig = process.env;
     }

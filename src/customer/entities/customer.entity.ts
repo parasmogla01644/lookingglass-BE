@@ -1,5 +1,6 @@
 import {
   Column,
+  DataType,
   HasMany,
   Model,
   PrimaryKey,
@@ -14,40 +15,43 @@ export class Customer extends Model {
   @Column
   id: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   first_name: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   last_name: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   email: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   phone: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   height: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   weight: string;
 
-  @Column({ allowNull: false })
+  @Column({ allowNull: true })
   body_shape: string;
 
-  @Column({ allowNull: false })
+  @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
+  profile: boolean;
+
+  @Column({ allowNull: true })
   preferred_style: string;
 
-  @Column({ allowNull: false, defaultValue: 0 })
+  @Column({ allowNull: true, defaultValue: 0 })
   chat_sessions_available: number;
 
-  @Column({ allowNull: false, defaultValue: 0 })
+  @Column({ allowNull: true, defaultValue: 0 })
   video_sessions_available: number;
 
-  @Column({ allowNull: false, defaultValue: 0 })
+  @Column({ allowNull: true, defaultValue: 0 })
   total_chat_sessions: number;
 
-  @Column({ allowNull: false, defaultValue: 0 })
+  @Column({ allowNull: true, defaultValue: 0 })
   total_video_sessions: number;
 
   @HasMany(() => SessionRequirements)

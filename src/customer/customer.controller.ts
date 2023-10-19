@@ -11,7 +11,10 @@ import {
 } from '@nestjs/common';
 import { CustomerService } from 'src/customer/customer.service';
 import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
-import { CreateCustomerDto, SubscriptionDto } from 'src/customer/dto/customer.dto';
+import {
+  CreateCustomerDto,
+  SubscriptionDto,
+} from 'src/customer/dto/customer.dto';
 import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
 
 @Controller()
@@ -32,10 +35,11 @@ export class CustomerController {
   @Post('/subscription/:customer_id')
   uodateCustomerValidity(
     @Param('customer_id') customer_id: string,
-    @Body() subscription_id: string,
+    @Body() body,
   ) {
-    return this.customerService.subscription(customer_id, subscription_id);
+    return this.customerService.subscription(customer_id, body.subscription_id);
   }
+
   @Put('/subscription/used/:customer_id')
   uodateUsedSubscription(
     @Param('customer_id') customer_id: string,

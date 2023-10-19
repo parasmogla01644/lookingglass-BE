@@ -10,17 +10,14 @@ import { ConfigModule } from 'src/core/config.module';
   imports: [
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: () => ({
+      useFactory: (configService: ConfigService) => ({
         dialect: 'postgres',
         host: process.env.POSTGRES_SERVER,
         port: parseInt(process.env.POSTGRES_PORT),
         username: process.env.POSTGRES_USER,
         password: process.env.POSTGRES_PASSWORD,
         database: process.env.POSTGRES_DATABASE,
-        pool: { idle: 5000, min: 1 },
-        autoLoadModels: true,
         synchronize: true,
-        standardConformingStrings: false,
         // clientMinMessages: false,
         logging: false,
         dialectOptions: {
