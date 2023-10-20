@@ -25,8 +25,10 @@ import { ConfigModule } from 'src/core/config.module';
         // clientMinMessages: false,
         logging: false,
         dialectOptions: {
-          clientMinMessages: 'ignore',
-          ssl: true,
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
         },
       }),
       inject: [ConfigService],
