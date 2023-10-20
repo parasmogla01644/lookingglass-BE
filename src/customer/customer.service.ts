@@ -15,8 +15,16 @@ export class CustomerService {
     createCustomerDto.profile = true;
     const customer = await this.customerRepo.get_customer(createCustomerDto.id);
 
-    if (customer) return customer;
-    return await this.customerRepo.create_customer(createCustomerDto);
+    if (customer) {
+      await this.customerRepo.update_customer(
+        createCustomerDto.id,
+        createCustomerDto,
+      );
+    } else return await this.customerRepo.create_customer(createCustomerDto);
+    const update_customer = await this.customerRepo.get_customer(
+      createCustomerDto.id,
+    );
+    return update_customer;
   }
 
   async findCustomerById(customer_id: string) {

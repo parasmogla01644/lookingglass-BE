@@ -23,8 +23,10 @@ export class CustomerRepository {
     return this.customer.findOne({ where: { id: customer_id } });
   }
 
-  findandCreate(customer_id) {
-    this.customer.findOne({ where: { id: customer_id } });
+  update_customer(customer_id, data) {
+    return this.customer.update(data, {
+      where: { id: customer_id },
+    });
   }
   updateValidity(customer_id, validity: object) {
     return this.customer.update(validity, {
