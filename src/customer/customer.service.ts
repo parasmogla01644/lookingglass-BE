@@ -49,10 +49,10 @@ export class CustomerService {
         body_shape: customer.body_shape,
         profile: customer.profile,
         preferred_style: customer.preferred_style,
-        chat_sessions_available: active[0]?.['chat_sessions_available'],
-        video_sessions_available: active[0]?.['video_sessions_available'],
-        total_chat_sessions: 1,
-        total_video_sessions: 1,
+        chat_sessions_available: active[0]?.['chat_sessions_available'] || 0,
+        video_sessions_available: active[0]?.['video_sessions_available'] || 0,
+        total_chat_sessions: 0,
+        total_video_sessions: 0,
       };
       for (let ele of totalCount) {
         if (ele?.product_id === '8822048915749') {
