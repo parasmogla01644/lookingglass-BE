@@ -56,12 +56,16 @@ export class CustomerService {
       };
       for (let ele of totalCount) {
         if (ele?.product_id === '8822048915749') {
-          customerData.total_chat_sessions = ele?.['product'] * 3;
-          customerData.total_video_sessions = ele?.['product'] * 2;
+          customerData.total_chat_sessions =
+            customerData.total_chat_sessions + ele?.['product'] * 3;
+          customerData.total_video_sessions =
+            customerData.total_video_sessions + ele?.['product'] * 2;
         }
         if (ele.product_id === '8822048293157') {
-          customerData.total_chat_sessions = ele?.['total_chat_sessions'] * 5;
-          customerData.total_video_sessions = ele?.['total_video_sessions'] * 5;
+          customerData.total_chat_sessions =
+            customerData.total_chat_sessions + ele?.['product'] * 5;
+          customerData.total_video_sessions =
+            customerData.total_chat_sessions + ele?.['product'] * 5;
         }
       }
 
@@ -130,7 +134,6 @@ export class CustomerService {
     } else {
       return { message: 'your package is expired' };
     }
-    console.log(updateSub);
 
     await this.customerRepo.updateOldestActiveCusSub(
       activeCustomer.id,

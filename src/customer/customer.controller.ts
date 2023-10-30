@@ -45,8 +45,6 @@ export class CustomerController {
     @Param('customer_id') customer_id: string,
     @Body() body,
   ) {
-    console.log('used');
-
     return this.customerService.usedSubscription(customer_id, body.key);
   }
 

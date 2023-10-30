@@ -133,8 +133,6 @@ export class CustomerRepository {
     });
   }
   updateOldestActiveCusSub(id, data) {
-    console.log(id, data);
-
     return this.customerSubscription.update(data, {
       where: { id: id },
     });
