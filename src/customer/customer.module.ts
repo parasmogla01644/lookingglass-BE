@@ -6,6 +6,7 @@ import { Customer } from 'src/customer/entities/customer.entity';
 import { SessionRequirements } from 'src/customer/entities/session_requirements.entity';
 import { CustomerRepository } from 'src/customer/customer.repository';
 import { SubscriptionPackages } from 'src/customer/entities/subscription_package.entity';
+import { CustomerSubscription } from './entities/customer_subscription';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { SubscriptionPackages } from 'src/customer/entities/subscription_package
       Customer,
       SessionRequirements,
       SubscriptionPackages,
+      CustomerSubscription,
     ]),
   ],
   controllers: [CustomerController],

@@ -45,7 +45,14 @@ export class CustomerController {
     @Param('customer_id') customer_id: string,
     @Body() body,
   ) {
+    console.log('used');
+
     return this.customerService.usedSubscription(customer_id, body.key);
+  }
+
+  @Get('/subscription/latest/:customer_id')
+  latestSubscriptionProduct(@Param('customer_id') customer_id: string) {
+    return this.customerService.getLatestSubscriptionProduct(customer_id);
   }
 
   ///////////////////////////////////////

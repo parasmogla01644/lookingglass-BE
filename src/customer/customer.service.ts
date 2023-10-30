@@ -28,11 +28,44 @@ export class CustomerService {
   }
 
   async findCustomerById(customer_id: string) {
-    const customer = await this.customerRepo.get_customer(customer_id);
+    let customer = await this.customerRepo.get_customer(customer_id);
+    const active = await this.customerRepo.getActiveSubscriptionCount(
+      customer_id,
+    );
+    const totalCount = await this.customerRepo.getTotalSubscriptionCount(
+      customer_id,
+    );
     const session_requirements =
       await this.customerRepo.get_session_requirements(customer_id);
     if (customer) {
-      return { customer, session_requirements };
+      let customerData = {
+        id: customer.id,
+        first_name: customer.first_name,
+        last_name: customer.last_name,
+        email: customer.email,
+        phone: customer.phone,
+        height: customer.height,
+        weight: customer.weight,
+        body_shape: customer.body_shape,
+        profile: customer.profile,
+        preferred_style: customer.preferred_style,
+        chat_sessions_available: active[0]?.['chat_sessions_available'],
+        video_sessions_available: active[0]?.['video_sessions_available'],
+        total_chat_sessions: 1,
+        total_video_sessions: 1,
+      };
+      for (let ele of totalCount) {
+        if (ele?.product_id === '8822048915749') {
+          customerData.total_chat_sessions = ele?.['product'] * 3;
+          customerData.total_video_sessions = ele?.['product'] * 2;
+        }
+        if (ele.product_id === '8822048293157') {
+          customerData.total_chat_sessions = ele?.['total_chat_sessions'] * 5;
+          customerData.total_video_sessions = ele?.['total_video_sessions'] * 5;
+        }
+      }
+
+      return { customer: customerData, session_requirements };
     }
 
     return { message: 'This customer is not exist in DB' };
@@ -53,33 +86,56 @@ export class CustomerService {
       });
     }
 
-    const updateSub = {
-      total_chat_sessions: customer.total_chat_sessions + getSub.chat_sessions,
-      total_video_sessions:
-        customer.total_video_sessions + getSub.video_sessions,
-      chat_sessions_available:
-        customer.chat_sessions_available + getSub.chat_sessions,
-      video_sessions_available:
-        customer.video_sessions_available + getSub.video_sessions,
+    // const updateSub = {
+    //   total_chat_sessions: customer.total_chat_sessions + getSub.chat_sessions,
+    //   total_video_sessions:
+    //     customer.total_video_sessions + getSub.video_sessions,
+    //   chat_sessions_available:
+    //     customer.chat_sessions_available + getSub.chat_sessions,
+    //   video_sessions_available:
+    //     customer.video_sessions_available + getSub.video_sessions,
+    // };
+
+    // await this.customerRepo.updateValidity(customer_id, updateSub);
+    const date = new Date();
+    const nextDate = date.getDate() + getSub.duration;
+    const expiry_date = date.setDate(nextDate);
+    const newSubs = {
+      package_name: getSub.package_name,
+      chat_sessions: getSub.chat_sessions,
+      video_sessions: getSub.video_sessions,
+      expiry_date: expiry_date,
+      customer_id: customer_id,
+      product_id: getSub.id,
     };
-    await this.customerRepo.updateValidity(customer_id, updateSub);
-    return { message: 'success', subscription_details: updateSub };
+
+    const newSub = await this.customerRepo.createCustomerSubscription(newSubs);
+    return { message: 'subscription successfully', data: newSub };
   }
   async usedSubscription(customer_id, key: string) {
-    const customer = await this.customerRepo.get_customer(customer_id);
+    let activeCustomer;
     let updateSub = {};
-    if (key == 'chat' && customer.chat_sessions_available > 0)
-      updateSub = {
-        chat_sessions_available: customer.chat_sessions_available - 1,
-      };
-    else if (key == 'video' && customer.video_sessions_available > 0)
-      updateSub = {
-        video_sessions_available: customer.video_sessions_available - 1,
-      };
-    else {
+    if (key == 'chat') {
+      activeCustomer = await this.customerRepo.getOldestActiveCusSub(
+        customer_id,
+        'chat',
+      );
+      updateSub['chat_sessions'] = activeCustomer.chat_sessions - 1;
+    } else if (key == 'video') {
+      activeCustomer = await this.customerRepo.getOldestActiveCusSub(
+        customer_id,
+        'video',
+      );
+      updateSub['video_sessions'] = activeCustomer.video_sessions - 1;
+    } else {
       return { message: 'your package is expired' };
     }
-    await this.customerRepo.updateValidity(customer_id, updateSub);
+    console.log(updateSub);
+
+    await this.customerRepo.updateOldestActiveCusSub(
+      activeCustomer.id,
+      updateSub,
+    );
     return { message: 'success' };
   }
   // ///////////////////////////////////////////
@@ -100,5 +156,14 @@ export class CustomerService {
     return {
       message: 'Data is not exist',
     };
+  }
+  //customer_subscription
+  async getLatestSubscriptionProduct(customer_id: string) {
+    const data = await this.customerRepo.getLatestSubscriptionProduct(
+      customer_id,
+    );
+
+    if (!data) return { message: "You don't have plan" };
+    return data;
   }
 }

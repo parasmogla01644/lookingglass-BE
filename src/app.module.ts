@@ -27,8 +27,8 @@ import { ConfigModule } from 'src/core/config.module';
         dialectOptions: {
           ssl: {
             require: true,
-            rejectUnauthorized: false
-          }
+            rejectUnauthorized: false,
+          },
         },
       }),
       inject: [ConfigService],

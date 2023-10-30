@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
 
-@Table({ modelName: 'customer_subscription_packages', freezeTableName: true })
-export class SubscriptionPackages extends Model {
+@Table({ modelName: 'customer_subscription', freezeTableName: true })
+export class CustomerSubscription extends Model {
   @Column({
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV1,
@@ -20,8 +20,11 @@ export class SubscriptionPackages extends Model {
   video_sessions: number;
 
   @Column({ type: DataTypes.DATE, allowNull: false })
-  start_date: string;
+  expiry_date: string;
 
-  @Column({ type: DataTypes.DATE, allowNull: false })
-  end_date: string;
+  @Column({ allowNull: true })
+  customer_id: string;
+
+  @Column({ allowNull: true })
+  product_id: string;
 }
