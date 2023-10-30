@@ -42,7 +42,7 @@ export class CustomerRepository {
   get_session_requirements(customer_id: string) {
     return this.sessionRequirements.findOne({
       where: { customer_id },
-      order: [['createdAt', 'asc']],
+      order: [['createdAt', 'desc']],
     });
   }
 
