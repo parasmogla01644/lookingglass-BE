@@ -65,7 +65,7 @@ export class CustomerService {
           customerData.total_chat_sessions =
             customerData.total_chat_sessions + ele?.['product'] * 5;
           customerData.total_video_sessions =
-            customerData.total_chat_sessions + ele?.['product'] * 5;
+            customerData.total_video_sessions + ele?.['product'] * 5;
         }
       }
 
