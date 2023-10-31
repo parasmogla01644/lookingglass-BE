@@ -16,10 +16,14 @@ import {
   SubscriptionDto,
 } from 'src/customer/dto/customer.dto';
 import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
+import { RechargeService } from './recharge.service';
 
 @Controller()
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(
+    private readonly customerService: CustomerService,
+    private readonly rechargeService: RechargeService,
+  ) {}
 
   @Post('/customer')
   create(@Body() createCustomerDto: CreateCustomerDto) {
@@ -37,7 +41,11 @@ export class CustomerController {
     @Param('customer_id') customer_id: string,
     @Body() body,
   ) {
-    return this.customerService.subscription(customer_id, body.subscription_id);
+    return this.customerService.subscription(
+      customer_id,
+      body.subscription_id,
+      body.email,
+    );
   }
 
   @Put('/subscription/used/:customer_id')

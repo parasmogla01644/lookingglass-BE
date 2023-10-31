@@ -6,10 +6,14 @@ import {
 import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
 import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
 import { CustomerRepository } from 'src/customer/customer.repository';
+import { RechargeService } from './recharge.service';
 
 @Injectable()
 export class CustomerService {
-  constructor(private readonly customerRepo: CustomerRepository) {}
+  constructor(
+    private readonly customerRepo: CustomerRepository,
+    private readonly rechargeService: RechargeService,
+  ) {}
 
   async create(createCustomerDto: CreateCustomerDto) {
     createCustomerDto.profile = true;
@@ -75,9 +79,9 @@ export class CustomerService {
     return { message: 'This customer is not exist in DB' };
   }
 
-  async subscription(customer_id: string, subscription_id: string) {
+  async subscription(customer_id: string, product_id: string, email: string) {
     const getSub = await this.customerRepo.get_subscription_packages_byId(
-      subscription_id,
+      product_id,
     );
 
     if (!getSub) {
@@ -90,17 +94,6 @@ export class CustomerService {
       });
     }
 
-    // const updateSub = {
-    //   total_chat_sessions: customer.total_chat_sessions + getSub.chat_sessions,
-    //   total_video_sessions:
-    //     customer.total_video_sessions + getSub.video_sessions,
-    //   chat_sessions_available:
-    //     customer.chat_sessions_available + getSub.chat_sessions,
-    //   video_sessions_available:
-    //     customer.video_sessions_available + getSub.video_sessions,
-    // };
-
-    // await this.customerRepo.updateValidity(customer_id, updateSub);
     const date = new Date();
     const nextDate = date.getDate() + getSub.duration;
     const expiry_date = date.setDate(nextDate);
@@ -114,6 +107,7 @@ export class CustomerService {
     };
 
     const newSub = await this.customerRepo.createCustomerSubscription(newSubs);
+    this.rechargeService.cancelPreviousSubscription(email, product_id);
     return { message: 'subscription successfully', data: newSub };
   }
   async usedSubscription(customer_id, key: string) {
