@@ -25,11 +25,12 @@ export class CustomerService {
         createCustomerDto,
       );
     } else await this.customerRepo.create_customer(createCustomerDto);
-    return this.getCustomerWithSubscription(createCustomerDto.id);
+    return await this.getCustomerWithSubscription(createCustomerDto.id);
   }
 
   async findCustomerById(customer_id: string) {
-    let customer = this.getCustomerWithSubscription(customer_id);
+    let customer = await this.getCustomerWithSubscription(customer_id);
+
     const session_requirements =
       await this.customerRepo.get_session_requirements(customer_id);
     if (customer) {
