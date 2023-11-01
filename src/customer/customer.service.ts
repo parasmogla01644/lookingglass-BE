@@ -24,14 +24,22 @@ export class CustomerService {
         createCustomerDto.id,
         createCustomerDto,
       );
-    } else return await this.customerRepo.create_customer(createCustomerDto);
-    const update_customer = await this.customerRepo.get_customer(
-      createCustomerDto.id,
-    );
-    return update_customer;
+    } else await this.customerRepo.create_customer(createCustomerDto);
+    return this.getCustomerWithSubscription(createCustomerDto.id);
   }
 
   async findCustomerById(customer_id: string) {
+    let customer = this.getCustomerWithSubscription(customer_id);
+    const session_requirements =
+      await this.customerRepo.get_session_requirements(customer_id);
+    if (customer) {
+      return { customer, session_requirements };
+    }
+
+    return { message: 'This customer is not exist in DB' };
+  }
+
+  async getCustomerWithSubscription(customer_id: string) {
     let customer = await this.customerRepo.get_customer(customer_id);
     const active = await this.customerRepo.getActiveSubscriptionCount(
       customer_id,
@@ -39,8 +47,7 @@ export class CustomerService {
     const totalCount = await this.customerRepo.getTotalSubscriptionCount(
       customer_id,
     );
-    const session_requirements =
-      await this.customerRepo.get_session_requirements(customer_id);
+
     if (customer) {
       let customerData = {
         id: customer.id,
@@ -73,12 +80,9 @@ export class CustomerService {
         }
       }
 
-      return { customer: customerData, session_requirements };
+      return customerData;
     }
-
-    return { message: 'This customer is not exist in DB' };
   }
-
   async subscription(customer_id: string, product_id: string, email: string) {
     const getSub = await this.customerRepo.get_subscription_packages_byId(
       product_id,

@@ -96,6 +96,9 @@ export class CustomerRepository {
 
       where: {
         customer_id: customer_id,
+        expiry_date: {
+          [sequelize.Op.gt]: new Date(),
+        },
       },
       group: ['product_id'],
       raw: true,
