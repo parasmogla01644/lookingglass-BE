@@ -66,19 +66,22 @@ export class CustomerService {
         total_chat_sessions: 0,
         total_video_sessions: 0,
       };
+      const availablePkg = await this.customerRepo.get_all_product();
+      const sessionMap = {};
+      for (let pkg of availablePkg) {
+        sessionMap[pkg.id] = {
+          chat_sessions: pkg.chat_sessions,
+          video_sessions: pkg.video_sessions,
+        };
+      }
+
       for (let ele of totalCount) {
-        if (ele?.product_id === '8822048915749') {
-          customerData.total_chat_sessions =
-            customerData.total_chat_sessions + ele?.['product'] * 3;
-          customerData.total_video_sessions =
-            customerData.total_video_sessions + ele?.['product'] * 2;
-        }
-        if (ele.product_id === '8822048293157') {
-          customerData.total_chat_sessions =
-            customerData.total_chat_sessions + ele?.['product'] * 5;
-          customerData.total_video_sessions =
-            customerData.total_video_sessions + ele?.['product'] * 5;
-        }
+        customerData.total_chat_sessions =
+          customerData.total_chat_sessions +
+          ele?.['productCount'] * sessionMap[ele.product_id].chat_sessions;
+        customerData.total_video_sessions =
+          customerData.total_video_sessions +
+          ele?.['productCount'] * sessionMap[ele.product_id].video_sessions;
       }
 
       return customerData;

@@ -36,7 +36,7 @@ export class CustomerRepository {
       where: { id: customer_id },
     });
   }
-  //////////////////////
+  //Session Requirements
 
   create_session_requirements(data) {
     return this.sessionRequirements.create(data);
@@ -49,15 +49,17 @@ export class CustomerRepository {
     });
   }
 
-  //////////////
+  //Subscription Package or Product
 
   get_subscription_packages_byId(id: string) {
     return this.subscriptionPackages.findOne({
       where: { id },
     });
   }
-
-  ///////////////
+  get_all_product() {
+    return this.subscriptionPackages.findAll();
+  }
+  //Customer subscription
   createCustomerSubscription(data) {
     return this.customerSubscription.create(data);
   }
@@ -91,7 +93,7 @@ export class CustomerRepository {
     const res = await this.customerSubscription.findAll({
       attributes: [
         'product_id',
-        [sequelize.fn('count', sequelize.col('product_id')), 'product'],
+        [sequelize.fn('count', sequelize.col('product_id')), 'productCount'],
       ],
 
       where: {
