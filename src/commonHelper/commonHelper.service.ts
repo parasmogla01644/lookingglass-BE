@@ -3,10 +3,10 @@ import { SignedUrlDto } from './dtos/signed-url.dto';
 import { S3 } from 'aws-sdk';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 const client = new SESClient({
-  region: 'us-east-2',
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: 'AKIASH2B2TDM5PZXOP6A',
-    secretAccessKey: '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',
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
   },
 });
 @Injectable()
