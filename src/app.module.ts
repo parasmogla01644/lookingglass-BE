@@ -5,6 +5,7 @@ import { CustomerModule } from 'src/customer/customer.module';
 import { ConfigService } from 'src/core/config.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from 'src/core/config.module';
+import { CommonHelperModule } from './commonHelper/commonHelper.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ConfigModule } from 'src/core/config.module';
       inject: [ConfigService],
     }),
     CustomerModule,
+    CommonHelperModule,
   ],
   controllers: [AppController],
   providers: [AppService],
