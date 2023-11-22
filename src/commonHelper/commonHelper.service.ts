@@ -2,15 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { SignedUrlDto } from './dtos/signed-url.dto';
 import { S3 } from 'aws-sdk';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-const client = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-  },
-});
+import { CustomerMaillDto, MailDto } from './dtos/customer_mail.dto';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
 @Injectable()
 export class CommonHelperService {
+  constructor(private readonly httpService: HttpService) {}
   public async getS3SignedUrl(params: SignedUrlDto) {
     const res = await this.generatePresignedUrl(params);
     return {
@@ -55,73 +53,44 @@ export class CommonHelperService {
     return AWS_S3.getSignedUrlPromise(`${method.toLowerCase()}Object`, params);
   }
 
-  public async sendEmail(typeFormData) {
-    var emailTemplate =
-      `
+  sendEmailUser(typeFormData: MailDto) {
+    var emailTemplate = `
     <html>
 <body>
   <table align="center" style="margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 1px solid #000; border-collapse: collapse;" cellpadding="10">
   <tbody>
-  <tr>
-      <td>
-          <h1 style="text-align: center; color:#000; margin: 15px 0 0; color: #000; font-size:22px">User Data:</h1>
-      </td>
-  </tr>
-  <tr>
-      <td>
-          <table width="100%" align="center" cellpadding="10">
-              <tbody><tr>
-                  <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Event:</td>
-                  <td style="color:#000; font-size:16px">${typeFormData.event}</td>
-              </tr>
-              <tr>
-                  <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Feel:</td>
-                  <td style="color:#000; font-size:16px">${typeFormData.feel}</td>
-              </tr>
-              <tr>
-                  <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">City:</td>
-                  <td style="color:#000; font-size:16px">${typeFormData.city}</td>
-              </tr>
-              <tr>
-                  <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Date:</td>
-                  <td style="color:#000; font-size:16px"><a style="color: #000;" href="mailto:[email-575]">${typeFormData.date}</a></td>
-              </tr>
-              <tr>
-                  <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Name:</td>
-                  <td style="color:#000; font-size:16px"><a href="tel:+1 (310) 000-0000" style="color:#000; font-size:16px">${typeFormData.name}</a></td>
-              </tr>
-               <tr>
-                  <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Email:</td>
-                  <td style="color:#000; font-size:16px">${typeFormData.email}</td>
-              </tr>
-              <tr>
-              <td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Phone:</td>
-              <td style="color:#000; font-size:16px">${typeFormData.phone}</td>
-          </tr>
-` +
-      `<tr><td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Outfit:</td><td style="color:#000; font-size:16px">` +
-      typeFormData.outfit?.map(
-        (el, index) =>
-          `<span key='${index}'>
-          <a href='${el}'>Image ${index + 1}</a>
-      </span>`,
-      ) +
-      `</td></tr>` +
-      `<tr><td valign="top" width="180" style="color:#000; font-size:16px;font-weight: bold;">Optional Outfit:</td><td style="color:#000; font-size:16px">
-  ` +
-      // typeFormData.optional_outfit?.map(
-      //   (el, index) =>
-      //     `<span key='${index}'>
-      //       <a href='${el}'>Image ${index + 1}</a>
-      //   </span>`
-      // ) +
-      `</td></tr></tbody></table>
+hey ${typeFormData.name}
+We are so glad you found us! Your stylist is looking at your outfit selections right now and choosing which is best for YOU. Check your phone for a text message from us. Simply reply “hi” to that message to instantly connect with your stylist via texting. 
+ We love helping women level up their look with our inclusive and affordable platform. Thank you for being here, we can't wait to style you.
+  
+</tbody></table>
     </body>
     </html>`;
 
+    return this.sendMail(
+      emailTemplate,
+      process.env.FROM_MAIL,
+      [typeFormData.email || process.env.TO_MAIL],
+      'Session Booked - Connect with your Stylist!',
+    );
+  }
+
+  public async sendMail(
+    emailTemplate: string,
+    source: string,
+    destination: string[],
+    subject?: string,
+  ) {
+    const client = new SESClient({
+      region: process.env.AWS_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_KEY,
+      },
+    });
     const params = {
       Destination: {
-        ToAddresses: [typeFormData.email],
+        ToAddresses: destination,
       },
       Message: {
         Body: {
@@ -130,9 +99,9 @@ export class CommonHelperService {
             Data: emailTemplate,
           },
         },
-        Subject: { Data: 'Testing email' },
+        Subject: { Data: subject },
       },
-      Source: 'lana@lookingglasslifestyle.com',
+      Source: source,
     };
 
     try {
@@ -143,6 +112,91 @@ export class CommonHelperService {
       return response;
     } catch (err) {
       console.error('Email sending error:', err);
+      return { message: 'UnSuccessful' };
     }
+  }
+  public async sendEmailStylist(typeformData: CustomerMaillDto) {
+    var emailTemplate = `
+    <html>
+<body>
+  <table align="center" style="background:#f7e2dd; margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 2px solid #c85c42; border-collapse: collapse;" cellpadding="10">
+  <tbody>
+        <tr>
+        <td align="center">
+            <a href="https://lookingglasslifestyle.com/" target="_blank"><img src="https://lookingglasslifestyle.com/cdn/shop/files/lookingglass_Primary_Logo.png?v=1686603299&width=260" alt="logo">
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-size: 16px;">
+<p>hey <strong>${typeformData.name}</strong> </p>
+<p>We are so glad you found us! Your stylist is looking at your outfit selections right now and choosing which is best for YOU. Check your phone for a text message from us. Simply reply “hi” to that message to instantly connect with your stylist via texting. </p>
+<p>
+ We love helping women level up their look with our inclusive and affordable platform. 
+</p>
+<p>
+ Thank you for being here, we can't wait to style you.
+</p>
+</td>
+</tr>
+    <tr>
+        <td align="center">
+            &nbsp;
+        </td>
+    </tr>
+  
+</tbody></table>
+    </body>
+    </html>`;
+
+    return await this.sendMail(
+      emailTemplate,
+      process.env.FROM_MAIL,
+      [typeformData.email || process.env.FROM_MAIL],
+      'URGENT: CLIENT STYLING SUBMISSION ',
+    );
+  }
+  public async messageStylist(receiver: string) {
+    const { data } = await firstValueFrom(
+      this.httpService.post(
+        `https://studio.twilio.com/v2/Flows/${process.env.TWILIO_FLOWS_ID}/Executions`,
+        {
+          To: receiver || process.env.DEFAULT_RECEIVER_MESSAGE,
+          From: process.env.FROM_MESSAGE,
+        },
+        {
+          auth: {
+            username: process.env.TWILIO_USERNAME,
+            password: process.env.TWILIO_PASSWORD,
+          },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      ),
+    );
+    return data;
+  }
+  public async messageUser(receiver: string) {
+    const { data } = await firstValueFrom(
+      this.httpService.post(
+        `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_USERNAME}/Messages.json`,
+        {
+          To: receiver,
+          MessagingServiceSid: process.env.MESSAGE_SERVICES_SID,
+          Body: `URGENT! A client just booked a text session. Please head to twilio to start the styling session. Details for the client have been sent to you via email. `,
+        },
+        {
+          auth: {
+            username: process.env.TWILIO_USERNAME,
+            password: process.env.TWILIO_PASSWORD,
+          },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      ),
+    );
+    return data;
   }
 }

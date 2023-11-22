@@ -157,7 +157,15 @@ export class CustomerService {
     const sessions = await this.customerRepo.get_session_requirements(
       customer_id,
     );
-    if (sessions) return sessions;
+    if (sessions) {
+      for (let ind in sessions?.outfit)
+        sessions.outfit[ind] =
+          process.env.AWS_CLOUDFRONT_URL + sessions.outfit[ind];
+      for (let ind in sessions?.optional_outfit)
+        sessions.optional_outfit[ind] =
+          process.env.AWS_CLOUDFRONT_URL + sessions.optional_outfit[ind];
+      return sessions;
+    }
     return {
       message: 'Data is not exist',
     };

@@ -20,3 +20,15 @@ export class CustomerMaillDto {
   @IsNotEmpty()
   date: string;
 }
+
+export class MailDto {
+  @IsNotEmpty()
+  name: string;
+  @IsNotEmpty()
+  email: string;
+}
+
+export class MessageDto {
+  @IsNotEmpty()
+  number: string;
+}
