@@ -57,11 +57,31 @@ export class CommonHelperService {
     var emailTemplate = `
     <html>
 <body>
-  <table align="center" style="margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 1px solid #000; border-collapse: collapse;" cellpadding="10">
+  <table align="center" style="background:#f7e2dd; margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 2px solid #c85c42; border-collapse: collapse;" cellpadding="10">
   <tbody>
-hey ${typeFormData.name}
-We are so glad you found us! Your stylist is looking at your outfit selections right now and choosing which is best for YOU. Check your phone for a text message from us. Simply reply “hi” to that message to instantly connect with your stylist via texting. 
- We love helping women level up their look with our inclusive and affordable platform. Thank you for being here, we can't wait to style you.
+        <tr>
+        <td align="center">
+            <a href="https://lookingglasslifestyle.com/" target="_blank"><img src="https://lookingglasslifestyle.com/cdn/shop/files/lookingglass_Primary_Logo.png?v=1686603299&width=260" alt="logo">
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-size: 16px;">
+<p>hey <strong>${typeFormData.name}</strong> </p>
+<p>We are so glad you found us! Your stylist is looking at your outfit selections right now and choosing which is best for YOU. Check your phone for a text message from us. Simply reply “hi” to that message to instantly connect with your stylist via texting. </p>
+<p>
+ We love helping women level up their look with our inclusive and affordable platform. 
+</p>
+<p>
+ Thank you for being here, we can't wait to style you.
+</p>
+</td>
+</tr>
+    <tr>
+        <td align="center">
+            &nbsp;
+        </td>
+    </tr>
   
 </tbody></table>
     </body>
@@ -115,44 +135,82 @@ We are so glad you found us! Your stylist is looking at your outfit selections r
       return { message: 'UnSuccessful' };
     }
   }
-  public async sendEmailStylist(typeformData: CustomerMaillDto) {
-    var emailTemplate = `
-    <html>
+  public async sendEmailStylist(typeFormData: CustomerMaillDto) {
+    var emailTemplate =
+      `<html>
 <body>
+
+
   <table align="center" style="background:#f7e2dd; margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 2px solid #c85c42; border-collapse: collapse;" cellpadding="10">
   <tbody>
-        <tr>
-        <td align="center">
-            <a href="https://lookingglasslifestyle.com/" target="_blank"><img src="https://lookingglasslifestyle.com/cdn/shop/files/lookingglass_Primary_Logo.png?v=1686603299&width=260" alt="logo">
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="font-size: 16px;">
-<p>hey <strong>${typeformData.name}</strong> </p>
-<p>We are so glad you found us! Your stylist is looking at your outfit selections right now and choosing which is best for YOU. Check your phone for a text message from us. Simply reply “hi” to that message to instantly connect with your stylist via texting. </p>
-<p>
- We love helping women level up their look with our inclusive and affordable platform. 
-</p>
-<p>
- Thank you for being here, we can't wait to style you.
-</p>
-</td>
-</tr>
-    <tr>
-        <td align="center">
-            &nbsp;
-        </td>
-    </tr>
-  
-</tbody></table>
+  	<tr>
+  		<td align="center">
+  			<a href="https://lookingglasslifestyle.com/" target="_blank"><img src="https://lookingglasslifestyle.com/cdn/shop/files/lookingglass_Primary_Logo.png?v=1686603299&width=260" alt="logo">
+  			</a>
+  		</td>
+  	</tr>
+  	<tr>
+  		<td style="font-size: 16px;">
+  			A client has just booked a text styling session. Please head to this link- <a href="https://www.twilio.com/console/flex/service-login"> Twilio </a>
+        <br />
+        Head to the dashboard and accept their message response. Remember that our #1 goal is to make the client feel good about themselves. Do the best you can with the clothes you have to work with. 
+        <br />
+        Leave them with a compliment and ensure them that they will look great for their event.
+  		</td>
+  	</tr>
+  <tr>
+      <td>
+          <h1 style="text-align: center; color:#c85c42; margin: 15px 0 0; font-size:22px">User Data:</h1>
+      </td>
+  </tr>
+  <tr>
+      <td>
+          <table width="100%" align="center" cellpadding="10">
+              <tbody><tr>
+                  <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Event:</td>
+                  <td style="color:#000; font-size:16px">${typeFormData.event}</td>
+              </tr>
+              <tr>
+                  <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Feel:</td>
+                  <td style="color:#000; font-size:16px">${typeFormData.feel}</td>
+              </tr>
+              <tr>
+                  <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">City:</td>
+                  <td style="color:#000; font-size:16px">${typeFormData.city}</td>
+              </tr>
+              <tr>
+                  <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Date:</td>
+                  <td style="color:#000; font-size:16px"><a style="color: #c85c42;" href="mailto:[email-575]">${typeFormData.date}</a></td>
+              </tr>
+              <tr>
+                  <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Name:</td>
+                  <td style="color:#000; font-size:16px"><a style="color:#c85c42;" href="tel:+1 (310) 000-0000" style="color:#000; font-size:16px">${typeFormData.name}</a></td>
+              </tr>
+               <tr>
+                  <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Email:</td>
+                  <td style="color:#000; font-size:16px">${typeFormData.email}</td>
+              </tr>
+              <tr>
+              <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Email:</td>
+              <td style="color:#000; font-size:16px">${typeFormData.phone}</td>
+          </tr>
+` +
+      `<tr><td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Outfit:</td><td style="color:#000; font-size:16px">` +
+      typeFormData.outfit?.map(
+        (el, index) =>
+          `<span key='${index}'>
+          <a style="color:#c85c42;" href='${el}'>Image ${index + 1}</a>
+      </span>`,
+      ) +
+      `</td></tr>` +
+      `</tbody></table>
     </body>
     </html>`;
 
     return await this.sendMail(
       emailTemplate,
       process.env.FROM_MAIL,
-      [typeformData.email || process.env.FROM_MAIL],
+      [typeFormData.email || process.env.FROM_MAIL],
       'URGENT: CLIENT STYLING SUBMISSION ',
     );
   }
