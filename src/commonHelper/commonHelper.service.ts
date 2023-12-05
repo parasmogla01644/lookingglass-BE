@@ -217,10 +217,11 @@ export class CommonHelperService {
   public async messageStylist(receiver: string) {
     const { data } = await firstValueFrom(
       this.httpService.post(
-        `https://studio.twilio.com/v2/Flows/${process.env.TWILIO_FLOWS_ID}/Executions`,
+        `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_USERNAME}/Messages.json`,
         {
-          To: receiver || process.env.DEFAULT_RECEIVER_MESSAGE,
-          From: process.env.FROM_MESSAGE,
+          To: receiver,
+          MessagingServiceSid: process.env.MESSAGE_SERVICES_SID,
+          Body: `URGENT! A client just booked a text session. Please head to twilio to start the styling session. Details for the client have been sent to you via email. `,
         },
         {
           auth: {
@@ -238,11 +239,10 @@ export class CommonHelperService {
   public async messageUser(receiver: string) {
     const { data } = await firstValueFrom(
       this.httpService.post(
-        `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_USERNAME}/Messages.json`,
+        `https://studio.twilio.com/v2/Flows/${process.env.TWILIO_FLOWS_ID}/Executions`,
         {
-          To: receiver,
-          MessagingServiceSid: process.env.MESSAGE_SERVICES_SID,
-          Body: `URGENT! A client just booked a text session. Please head to twilio to start the styling session. Details for the client have been sent to you via email. `,
+          To: receiver || process.env.DEFAULT_RECEIVER_MESSAGE,
+          From: process.env.FROM_MESSAGE,
         },
         {
           auth: {
