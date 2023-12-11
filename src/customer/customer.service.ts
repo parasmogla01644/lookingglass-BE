@@ -7,12 +7,14 @@ import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
 import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
 import { CustomerRepository } from 'src/customer/customer.repository';
 import { RechargeService } from './recharge.service';
+import { CommonHelperService } from 'src/commonHelper/commonHelper.service';
 
 @Injectable()
 export class CustomerService {
   constructor(
     private readonly customerRepo: CustomerRepository,
     private readonly rechargeService: RechargeService,
+    private readonly commonHelperServie: CommonHelperService,
   ) {}
 
   async create(createCustomerDto: CreateCustomerDto) {
@@ -113,10 +115,46 @@ export class CustomerService {
       customer_id: customer_id,
       product_id: getSub.id,
     };
-
+    const getLatestSub = await this.customerRepo.getLatestSubscriptionProduct(
+      customer_id,
+    );
     const newSub = await this.customerRepo.createCustomerSubscription(newSubs);
-    this.rechargeService.cancelPreviousSubscription(email, product_id);
-    return { message: 'subscription successfully', data: newSub };
+    // this.rechargeService.cancelPreviousSubscription(email, product_id);
+    if (newSub) {
+      var emailTemplate = `
+    <html>
+<body>
+  <table align="center" style="background:#f7e2dd; margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 2px solid #c85c42; border-collapse: collapse;" cellpadding="10">
+  <tbody>
+        <tr>
+        <td align="center">
+            <a href="https://lookingglasslifestyle.com/" target="_blank"><img src="https://lookingglasslifestyle.com/cdn/shop/files/lookingglass_Primary_Logo.png?v=1686603299&width=260" alt="logo">
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="font-size: 16px;">
+<p>Hi </p>
+<p>Customer with ID ${customer_id} has upgraded to a new subscription. To optimize your service, please cancel the previous subscription with Product ID ${getLatestSub.product_id} , Package Name ${getLatestSub.package_name} and Email:${email} </p>
+</td>
+</tr>
+    <tr>
+        <td align="center">
+            &nbsp;
+        </td>
+    </tr>
+  
+</tbody></table>
+    </body>
+    </html>`;
+      this.commonHelperServie.sendMail(
+        emailTemplate,
+        'lana@lookingglasslifestyle.com',
+        ['lana@lookingglasslifestyle.com'],
+        'New Subscription',
+      );
+      return { message: 'subscription successfully', data: newSub };
+    }
   }
   async usedSubscription(customer_id, key: string) {
     let activeCustomer;

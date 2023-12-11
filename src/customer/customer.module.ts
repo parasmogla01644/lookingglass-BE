@@ -9,6 +9,7 @@ import { SubscriptionPackages } from 'src/customer/entities/subscription_package
 import { CustomerSubscription } from './entities/customer_subscription';
 import { HttpModule } from '@nestjs/axios';
 import { RechargeService } from './recharge.service';
+import { CommonHelperService } from 'src/commonHelper/commonHelper.service';
 
 @Module({
   imports: [
@@ -21,6 +22,11 @@ import { RechargeService } from './recharge.service';
     ]),
   ],
   controllers: [CustomerController],
-  providers: [CustomerService, RechargeService, CustomerRepository],
+  providers: [
+    CustomerService,
+    RechargeService,
+    CustomerRepository,
+    CommonHelperService,
+  ],
 })
 export class CustomerModule {}
