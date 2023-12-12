@@ -123,7 +123,8 @@ export class CustomerService {
         newSubs,
       );
       // this.rechargeService.cancelPreviousSubscription(email, product_id);
-      if (newSub) {
+
+      if (newSub && getLatestSub) {
         var emailTemplate = `
     <html>
 <body>
