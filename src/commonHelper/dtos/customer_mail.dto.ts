@@ -19,6 +19,9 @@ export class CustomerMaillDto {
   outfit: string[];
   @IsNotEmpty()
   date: string;
+
+  @IsNotEmpty()
+  type: string;
 }
 
 export class MailDto {

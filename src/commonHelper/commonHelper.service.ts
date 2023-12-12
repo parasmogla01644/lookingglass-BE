@@ -136,11 +136,18 @@ export class CommonHelperService {
     }
   }
   public async sendEmailStylist(typeFormData: CustomerMaillDto) {
+    let extraMessage = `A client has just booked a ${typeFormData.type} styling session. Please head to this link- <a href="https://www.twilio.com/console/flex/service-login"> Twilio </a>
+        <br />
+        Head to the dashboard and accept their message response. Remember that our #1 goal is to make the client feel good about themselves. Do the best you can with the clothes you have to work with. 
+        <br />`;
+    if (typeFormData.type === 'video')
+      extraMessage = `A client has just booked a ${typeFormData.type} styling session. Remember that our #1 goal is to make the client feel good about themselves. 
+    Do the best you can with the clothes you have to work with. 
+        `;
+
     var emailTemplate =
       `<html>
 <body>
-
-
   <table align="center" style="background:#f7e2dd; margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 2px solid #c85c42; border-collapse: collapse;" cellpadding="10">
   <tbody>
   	<tr>
@@ -151,10 +158,8 @@ export class CommonHelperService {
   	</tr>
   	<tr>
   		<td style="font-size: 16px;">
-  			A client has just booked a text styling session. Please head to this link- <a href="https://www.twilio.com/console/flex/service-login"> Twilio </a>
-        <br />
-        Head to the dashboard and accept their message response. Remember that our #1 goal is to make the client feel good about themselves. Do the best you can with the clothes you have to work with. 
-        <br />
+  			
+     ${extraMessage}
         Leave them with a compliment and ensure them that they will look great for their event.
   		</td>
   	</tr>
