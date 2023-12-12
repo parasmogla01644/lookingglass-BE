@@ -90,38 +90,41 @@ export class CustomerService {
     }
   }
   async subscription(customer_id: string, product_id: string, email: string) {
-    const getSub = await this.customerRepo.get_subscription_packages_byId(
-      product_id,
-    );
+    try {
+      const getSub = await this.customerRepo.get_subscription_packages_byId(
+        product_id,
+      );
 
-    if (!getSub) {
-      return { message: 'Invalid subscription id' };
-    }
-    let customer = await this.customerRepo.get_customer(customer_id);
-    if (!customer) {
-      customer = await this.customerRepo.create_customer({
-        id: customer_id,
-      });
-    }
+      if (!getSub) {
+        return { message: 'Invalid subscription id' };
+      }
+      let customer = await this.customerRepo.get_customer(customer_id);
+      if (!customer) {
+        customer = await this.customerRepo.create_customer({
+          id: customer_id,
+        });
+      }
 
-    const date = new Date();
-    const nextDate = date.getDate() + getSub.duration;
-    const expiry_date = date.setDate(nextDate);
-    const newSubs = {
-      package_name: getSub.package_name,
-      chat_sessions: getSub.chat_sessions,
-      video_sessions: getSub.video_sessions,
-      expiry_date: expiry_date,
-      customer_id: customer_id,
-      product_id: getSub.id,
-    };
-    const getLatestSub = await this.customerRepo.getLatestSubscriptionProduct(
-      customer_id,
-    );
-    const newSub = await this.customerRepo.createCustomerSubscription(newSubs);
-    // this.rechargeService.cancelPreviousSubscription(email, product_id);
-    if (newSub) {
-      var emailTemplate = `
+      const date = new Date();
+      const nextDate = date.getDate() + getSub.duration;
+      const expiry_date = date.setDate(nextDate);
+      const newSubs = {
+        package_name: getSub.package_name,
+        chat_sessions: getSub.chat_sessions,
+        video_sessions: getSub.video_sessions,
+        expiry_date: expiry_date,
+        customer_id: customer_id,
+        product_id: getSub.id,
+      };
+      const getLatestSub = await this.customerRepo.getLatestSubscriptionProduct(
+        customer_id,
+      );
+      const newSub = await this.customerRepo.createCustomerSubscription(
+        newSubs,
+      );
+      // this.rechargeService.cancelPreviousSubscription(email, product_id);
+      if (newSub) {
+        var emailTemplate = `
     <html>
 <body>
   <table align="center" style="background:#f7e2dd; margin: 50px auto; width: 650px;ont-family: arial; font-size: 12px; border: 2px solid #c85c42; border-collapse: collapse;" cellpadding="10">
@@ -147,13 +150,17 @@ export class CustomerService {
 </tbody></table>
     </body>
     </html>`;
-      this.commonHelperServie.sendMail(
-        emailTemplate,
-        'lana@lookingglasslifestyle.com',
-        ['lana@lookingglasslifestyle.com'],
-        'New Subscription',
-      );
+        this.commonHelperServie.sendMail(
+          emailTemplate,
+          'lana@lookingglasslifestyle.com',
+          ['lana@lookingglasslifestyle.com'],
+          'New Subscription',
+        );
+      }
       return { message: 'subscription successfully', data: newSub };
+    } catch (error) {
+      console.log(error);
+      return { message: error.message || 'Something went wrong' };
     }
   }
   async usedSubscription(customer_id, key: string) {
