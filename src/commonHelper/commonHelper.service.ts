@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CommonHelperService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) { }
   public async getS3SignedUrl(params: SignedUrlDto) {
     const res = await this.generatePresignedUrl(params);
     return {
@@ -196,7 +196,7 @@ export class CommonHelperService {
                   <td style="color:#000; font-size:16px">${typeFormData.email}</td>
               </tr>
               <tr>
-              <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Email:</td>
+              <td valign="top" width="80" style="color:#000; font-size:16px;font-weight: bold;">Phone:</td>
               <td style="color:#000; font-size:16px">${typeFormData.phone}</td>
           </tr>
 ` +
