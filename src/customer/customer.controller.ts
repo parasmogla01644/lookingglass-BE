@@ -34,7 +34,6 @@ export class CustomerController {
   findCustomerById(@Param('customer_id') customer_id: string) {
     return this.customerService.findCustomerById(customer_id);
   }
-  //////
 
   @Post('/subscription/:customer_id')
   uodateCustomerValidity(
@@ -61,7 +60,7 @@ export class CustomerController {
     return this.customerService.getLatestSubscriptionProduct(customer_id);
   }
 
-  ///////////////////////////////////////
+
   @Post('/session-requirements')
   createSessionRequirements(
     @Body() createSessionRequirementsDto: CreateSessionRequirementsDto,

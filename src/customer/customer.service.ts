@@ -189,7 +189,6 @@ export class CustomerService {
     );
     return { message: 'success' };
   }
-  // ///////////////////////////////////////////
 
   async createCreateSessionRequirements(
     createSessionRequirementsDto: CreateSessionRequirementsDto,

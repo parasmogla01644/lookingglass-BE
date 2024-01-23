@@ -90,7 +90,7 @@ export class CommonHelperService {
     return this.sendMail(
       emailTemplate,
       process.env.FROM_MAIL,
-      [typeFormData.email || process.env.TO_MAIL],
+      [typeFormData.email],
       'Session Booked - Connect with your Stylist!',
     );
   }
@@ -215,7 +215,7 @@ export class CommonHelperService {
     return await this.sendMail(
       emailTemplate,
       process.env.FROM_MAIL,
-      [typeFormData.email || process.env.FROM_MAIL],
+      [typeFormData.email],
       'URGENT: CLIENT STYLING SUBMISSION ',
     );
   }
