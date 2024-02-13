@@ -32,4 +32,8 @@ export class CommonHelperController {
   sendmessageCustomer(@Body() numberDto: MessageDto) {
     return this.helperService.messageUser(numberDto.number);
   }
+  @Post('/unique-images')
+  getUniqueImages(@Body() imagesArray: string[]) {
+    return this.helperService.getUniqueImages(imagesArray);
+  }
 }

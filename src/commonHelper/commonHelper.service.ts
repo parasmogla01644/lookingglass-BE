@@ -5,6 +5,11 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import { CustomerMaillDto, MailDto } from './dtos/customer_mail.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
+
+const phash = require('sharp-phash');
+const dist = require('sharp-phash/distance');
+
 
 @Injectable()
 export class CommonHelperService {
@@ -261,5 +266,49 @@ export class CommonHelperService {
       ),
     );
     return data;
+  }
+  public async getUniqueImages(data: string[]) {
+    try {
+      const imageUrls = await Promise.all(
+        data?.map((el: string) =>
+          this.downloadImage(`https://duuesonp85ehp.cloudfront.net/${el}`),
+        ),
+      );
+      const phashData = await Promise.all(
+        imageUrls?.map((el) => phash(el?.data)),
+      );
+      const obj = {};
+      await Promise.all(phashData).then((el) => {
+        for (let i = 0; i < el.length; i++) {
+          obj[el[i]] = data[i];
+        }
+
+        for (let i = 0; i < el.length; i++) {
+          for (let j = i + 1; j < el.length; j++) {
+            if (this.similarityFunction(dist(el[i], el[j]))) {
+              delete obj[el[j]];
+            }
+          }
+        }
+      });
+      const uniqueImages = Object.values(obj)?.map(
+        (el) => `https://duuesonp85ehp.cloudfront.net/${el}`,
+      );
+      return { data: uniqueImages };
+    } catch (err) {
+      return { data: [] };
+    }
+  }
+
+  downloadImage(url: string) {
+    return axios.get(url, {
+      decompress: false,
+      responseType: 'arraybuffer',
+      timeout: 60000,
+    });
+  }
+  similarityFunction(distance: number) {
+    const similarity = 1 - distance / 64; // Normalize between 0 and 1
+    return similarity >= 0.8;
   }
 }
