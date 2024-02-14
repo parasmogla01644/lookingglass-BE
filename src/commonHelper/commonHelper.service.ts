@@ -271,28 +271,30 @@ export class CommonHelperService {
     try {
       const imageUrls = await Promise.all(
         data?.map((el: string) =>
-          this.downloadImage(`https://duuesonp85ehp.cloudfront.net/${el}`),
+          this.downloadImage(`${process.env.AWS_CLOUDFRONT_VIDEO_URL}/${el}`),
         ),
       );
       const phashData = await Promise.all(
         imageUrls?.map((el) => phash(el?.data)),
       );
       const obj = {};
+
       await Promise.all(phashData).then((el) => {
         for (let i = 0; i < el.length; i++) {
-          obj[el[i]] = data[i];
+          obj[`${el[i]}_${i}`] = data[i];
         }
 
         for (let i = 0; i < el.length; i++) {
           for (let j = i + 1; j < el.length; j++) {
             if (this.similarityFunction(dist(el[i], el[j]))) {
-              delete obj[el[j]];
+              delete obj[`${el[i]}_${i}`];
             }
           }
         }
       });
+
       const uniqueImages = Object.values(obj)?.map(
-        (el) => `https://duuesonp85ehp.cloudfront.net/${el}`,
+        (el) => `${process.env.AWS_CLOUDFRONT_VIDEO_URL}/${el}`,
       );
       return { data: uniqueImages };
     } catch (err) {
