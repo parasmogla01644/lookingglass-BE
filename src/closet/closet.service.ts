@@ -1,11 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ClosetRepository } from './closet.repository';
-import { CreateClosetDto } from './dto/create-closet.dto';
-import { UpdateClosetDto } from './dto/update-closet.dto';
+import {
+  ClosetFilter,
+  CreateClosetDto,
+  GenerateSignedUrlDto,
+} from './dto/closet.dto';
+import { MediaService } from './media.service';
 
 @Injectable()
 export class ClosetService {
-  constructor(private readonly closetRepo: ClosetRepository) {}
+  generatePresignedUrl(payload: GenerateSignedUrlDto) {
+    return this.mediaService.generatePresignedUrl(payload);
+  }
+  constructor(
+    private readonly closetRepo: ClosetRepository,
+    private readonly mediaService: MediaService,
+  ) {}
 
   async createCloset(payload: CreateClosetDto) {
     try {
@@ -39,33 +49,35 @@ export class ClosetService {
         };
         newCloset.push(closet);
       });
-      console.log(newCloset);
-
       await this.closetRepo.createCloset(newCloset);
       return 'Success';
     } catch (error) {
       console.log(error);
+      throw new BadRequestException('Something went wrong');
     }
   }
 
-  findAll() {
-    return `This action returns all closet`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} closet`;
-  }
-
-  update(id: number, updateClosetDto: UpdateClosetDto) {
-    return `This action updates a #${id} closet`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} closet`;
+  async findAllCloset(userId: string, queryParams: ClosetFilter) {
+    try {
+      return await this.closetRepo.findAllCloset(userId, queryParams);
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Something went wrong');
+    }
   }
 
   async findCategories() {
     const result = await this.closetRepo.findAllCategory();
     return result;
+  }
+
+  async deleteCloset(userId: string, id: string) {
+    try {
+      await this.closetRepo.deleteCloset(userId, id);
+      return 'success';
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Something went wrong');
+    }
   }
 }

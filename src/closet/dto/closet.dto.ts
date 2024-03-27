@@ -41,3 +41,17 @@ export class GenerateSignedUrlDto {
   @IsNotEmpty()
   email: string;
 }
+
+export class ClosetFilter {
+  @IsOptional()
+  category: string[];
+
+  @IsOptional()
+  brand: string[];
+
+  @IsOptional()
+  color: string[];
+
+  @IsOptional()
+  season: string[];
+}

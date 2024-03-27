@@ -28,6 +28,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/sequelize": "^10.0.0",
+    "@sequelize/core": "^7.0.0-alpha.37",
     "aws-sdk": "^2.1495.0",
     "axios": "^1.6.0",
     "class-transformer": "^0.5.1",

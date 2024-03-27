@@ -4,24 +4,23 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ClosetService } from './closet.service';
-import { CreateClosetDto, GenerateSignedUrlDto } from './dto/create-closet.dto';
-import { UpdateClosetDto } from './dto/update-closet.dto';
-import { MediaService } from './media.service';
+import {
+  ClosetFilter,
+  CreateClosetDto,
+  GenerateSignedUrlDto,
+} from './dto/closet.dto';
 
 @Controller('closet')
 export class ClosetController {
-  constructor(
-    private readonly closetService: ClosetService,
-    private readonly mediaService: MediaService,
-  ) {}
+  constructor(private readonly closetService: ClosetService) {}
 
   @Post('signed-url')
   async generateSignedUrl(@Body() dto: GenerateSignedUrlDto) {
-    return this.mediaService.generatePresignedUrl(dto);
+    return this.closetService.generatePresignedUrl(dto);
   }
 
   @Get('/categories')
@@ -34,23 +33,13 @@ export class ClosetController {
     return this.closetService.createCloset(createClosetDto);
   }
 
-  @Get()
-  findAll() {
-    return this.closetService.findAll();
+  @Get(':userId')
+  findAll(@Param('userId') userId: string, @Query() queryParams: ClosetFilter) {
+    return this.closetService.findAllCloset(userId, queryParams);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.closetService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClosetDto: UpdateClosetDto) {
-    return this.closetService.update(+id, updateClosetDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.closetService.remove(+id);
+  @Delete(':userId/:id')
+  remove(@Param('userId') userId: string, @Param('id') id: string) {
+    return this.closetService.deleteCloset(userId, id);
   }
 }

@@ -61,4 +61,13 @@ export class MediaService {
     }
     return `${process.env.AWS_CLOUDFRONT_VIDEO_URL}/${key}`;
   }
+
+  deleteFromS3(bucket, key) {
+    const params = { Bucket: bucket, Key: key };
+
+    this.AWS_S3.deleteObject(params, function (err, data) {
+      if (err) console.log(err, err.stack); // error
+      else console.log(key, 'is deleted successfully'); // deleted
+    });
+  }
 }
