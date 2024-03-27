@@ -1,10 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Customer } from 'src/customer/entities/customer.entity';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { SessionRequirements } from 'src/customer/entities/session_requirements.entity';
-import { SubscriptionPackages } from './entities/subscription_package.entity';
-import { CustomerSubscription } from './entities/customer_subscription';
 import sequelize from 'sequelize';
+import { Customer } from 'src/customer/entities/customer.entity';
+import { SessionRequirements } from 'src/customer/entities/session_requirements.entity';
+import { CustomerSubscription } from './entities/customer_subscription';
+import { SubscriptionPackages } from './entities/subscription_package.entity';
 @Injectable()
 export class CustomerRepository {
   constructor(

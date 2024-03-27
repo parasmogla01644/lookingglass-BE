@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
+import { SequelizeModule } from '@nestjs/sequelize';
 import { AppController } from 'src/app.controller';
 import { AppService } from 'src/app.service';
-import { CustomerModule } from 'src/customer/customer.module';
-import { ConfigService } from 'src/core/config.service';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from 'src/core/config.module';
+import { ConfigService } from 'src/core/config.service';
+import { CustomerModule } from 'src/customer/customer.module';
+import { ClosetModule } from './closet/closet.module';
 import { CommonHelperModule } from './commonHelper/commonHelper.module';
 
 @Module({
@@ -36,6 +37,7 @@ import { CommonHelperModule } from './commonHelper/commonHelper.module';
     }),
     CustomerModule,
     CommonHelperModule,
+    ClosetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

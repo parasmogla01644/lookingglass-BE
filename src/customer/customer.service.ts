@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import {
-  CreateCustomerDto,
-  SubscriptionDto,
-} from 'src/customer/dto/customer.dto';
-import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
-import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
-import { CustomerRepository } from 'src/customer/customer.repository';
-import { RechargeService } from './recharge.service';
 import { CommonHelperService } from 'src/commonHelper/commonHelper.service';
+import { CustomerRepository } from 'src/customer/customer.repository';
+import { CreateCustomerDto } from 'src/customer/dto/customer.dto';
+import { CreateSessionRequirementsDto } from 'src/customer/dto/session-requirements.dto';
+import { RechargeService } from './recharge.service';
 
 @Injectable()
 export class CustomerService {
