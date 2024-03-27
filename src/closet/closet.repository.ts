@@ -17,6 +17,6 @@ export class ClosetRepository {
   }
 
   createCloset(payload) {
-    return this.closet.create(payload);
+    return this.closet.bulkCreate(payload);
   }
 }

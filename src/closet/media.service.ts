@@ -20,11 +20,11 @@ export class MediaService {
     fileName: string;
     contentType: string;
     email: string;
-  }): Promise<{ uploadUrl: string; key: string }> {
+  }): Promise<{ uploadUrl: string; key: string; contentUrl: string }> {
     const { fileName, contentType, email } = props;
 
     const key = this.generateKeyForImageModule(email, contentType, fileName);
-    // const contentUrl = this.formatKey(key);
+    const contentUrl = this.formatKey(key);
     const bucket = process.env.AWS_S3_BUCKET;
 
     const method = 'put';
@@ -37,7 +37,7 @@ export class MediaService {
       params,
     );
 
-    return { uploadUrl, key };
+    return { uploadUrl, key, contentUrl };
   }
 
   private generateKeyForImageModule(
@@ -59,6 +59,6 @@ export class MediaService {
     if (key && validator.isURL(key)) {
       return key;
     }
-    return `${process.env.AWS_BUCKET_CLOUDFRONT_URL}/${key}`;
+    return `${process.env.AWS_CLOUDFRONT_VIDEO_URL}/${key}`;
   }
 }

@@ -11,6 +11,12 @@ export class Closet extends Model {
   id: string;
 
   @Column({ allowNull: false })
+  email: string;
+
+  @Column({ allowNull: false })
+  user_id: string;
+
+  @Column({ allowNull: false })
   category: string;
 
   @Column({ allowNull: false })

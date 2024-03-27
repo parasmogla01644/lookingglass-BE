@@ -2,6 +2,12 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateClosetDto {
   @IsNotEmpty()
+  email: string;
+
+  @IsNotEmpty()
+  user_id: string;
+
+  @IsNotEmpty()
   category: string;
 
   @IsNotEmpty()
