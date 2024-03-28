@@ -34,12 +34,13 @@ export class GenerateSignedUrlDto {
   @IsString()
   fileName: string;
 
+  @IsOptional()
   @IsString()
   contentType: string;
 
   @IsString()
   @IsNotEmpty()
-  email: string;
+  path: string;
 }
 
 export class ClosetFilter {

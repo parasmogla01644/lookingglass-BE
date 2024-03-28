@@ -18,12 +18,11 @@ export class MediaService {
 
   public async generatePresignedUrl(props: {
     fileName: string;
-    contentType: string;
-    email: string;
+    path: string;
   }): Promise<{ uploadUrl: string; key: string; contentUrl: string }> {
-    const { fileName, contentType, email } = props;
+    const { fileName, path } = props;
 
-    const key = this.generateKeyForImageModule(email, contentType, fileName);
+    const key = this.generateKeyForImageModule(path, fileName);
     const contentUrl = this.formatKey(key);
     const bucket = process.env.AWS_S3_BUCKET;
 
@@ -41,12 +40,12 @@ export class MediaService {
   }
 
   private generateKeyForImageModule(
-    email: string,
-    contentType: string,
+    path: string,
     fileName: string,
+    contentType?: string,
   ): string {
     const extension = this.findExtension(fileName);
-    return `${email}/${contentType}/${new Date().getTime()}${extension}`;
+    return `${path}/${new Date().getTime()}${extension}`;
   }
 
   public findExtension(key: string) {

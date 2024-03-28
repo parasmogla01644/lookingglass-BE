@@ -9,13 +9,14 @@ import { MediaService } from './media.service';
 
 @Injectable()
 export class ClosetService {
-  generatePresignedUrl(payload: GenerateSignedUrlDto) {
-    return this.mediaService.generatePresignedUrl(payload);
-  }
   constructor(
     private readonly closetRepo: ClosetRepository,
     private readonly mediaService: MediaService,
   ) {}
+
+  generatePresignedUrl(payload: GenerateSignedUrlDto) {
+    return this.mediaService.generatePresignedUrl(payload);
+  }
 
   async createCloset(payload: CreateClosetDto) {
     try {
